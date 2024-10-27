@@ -6,17 +6,17 @@ from io import BytesIO
 
 
 def get_weather(city):
-    api_key = 'API_KEY'  # Replace with your API key
+    api_key = 'API_KEY'
 
     try:
-        # Make the API request
+
         url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&units=imperial&APPID={api_key}"
         weather_data = requests.get(url)
 
-        # Convert to JSON and check for errors
+
         data = weather_data.json()
 
-        # Check for errors based on status code or API response content
+
         if weather_data.status_code == 401:
             return {"error": "Invalid API key. Please check your API key and make sure it's activated."}
 
@@ -29,13 +29,13 @@ def get_weather(city):
         if data.get('cod') == '404':
             return {"error": "City not found. Please check the city name."}
 
-        # Extract weather information
+
         weather = data.get('weather', [{}])[0].get('main', 'N/A')
         description = data.get('weather', [{}])[0].get('description', 'N/A').capitalize()
         icon_code = data.get('weather', [{}])[0].get('icon', '01d')
         temp = round(data.get('main', {}).get('temp', 0))
 
-        # Convert timestamp to local time
+
         timestamp = data.get('dt', 0)
         local_time = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -66,19 +66,19 @@ def visualize_weather(data):
     time = data["time"]
     icon_code = data["icon_code"]
 
-    # Download the weather icon
+
     icon_url = f"http://openweathermap.org/img/wn/{icon_code}@2x.png"
     icon_data = requests.get(icon_url)
     icon_img = Image.open(BytesIO(icon_data.content))
 
-    # Plot setup
-    fig, ax = plt.subplots(figsize=(6, 6))
-    ax.axis('off')  # Turn off the axis
 
-    # Display the weather icon
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ax.axis('off')
+
+
     ax.imshow(icon_img, aspect='auto', extent=[0.3, 0.7, 0.7, 1])
 
-    # Display weather information as text with the required format
+
     text = (
         f"City: {city}\n"
         f"Weather: {weather} ({description})\n"
@@ -97,7 +97,7 @@ def main():
             break
         data = get_weather(city)
 
-        # Formatted console output
+
         if "error" in data:
             print(data["error"])
         else:
